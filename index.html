@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apsit Canteen - Order Food</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main App -->
+    <div id="menu" class="page active">
+        <div class="app-container menu-page">
+            <nav class="navbar">
+                <div class="nav-content">
+                    <div class="logo">🍽️ Apsit Canteen</div>
+                    <div class="nav-links">
+                        <span class="nav-link active" onclick="showPage('menu')">Menu</span>
+                        <span class="nav-link" onclick="showPage('cart')">
+                            Cart <span id="cartBadge" class="cart-badge">0</span>
+                        </span>
+                        <span class="nav-link" onclick="showPage('profile')">Profile</span>
+                        <span class="nav-link" onclick="logout()">Logout</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search for food items..." oninput="searchMenu()">
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <div id="menuGrid" class="menu-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Page -->
+    <div id="cart" class="page">
+        <div class="app-container">
+            <nav class="navbar">
+                <div class="nav-content">
+                    <div class="logo">🍽️ Apsit Canteen</div>
+                    <div class="nav-links">
+                        <span class="nav-link" onclick="showPage('menu')">Menu</span>
+                        <span class="nav-link active" onclick="showPage('cart')">
+                            Cart <span id="cartBadge2" class="cart-badge">0</span>
+                        </span>
+                        <span class="nav-link" onclick="showPage('profile')">Profile</span>
+                        <span class="nav-link" onclick="logout()">Logout</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container">
+                <div class="cart-container">
+                    <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Your Cart</h2>
+                    <div id="cartItems"></div>
+                    <div class="cart-total">
+                        Total: ₹<span id="cartTotal">0</span>
+                    </div>
+                    <button id="checkoutBtn" class="btn" onclick="showPage('checkout')" disabled>Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile" class="page">
+        <div class="app-container">
+            <nav class="navbar">
+                <div class="nav-content">
+                    <div class="logo">🍽️ Apsit Canteen</div>
+                    <div class="nav-links">
+                        <span class="nav-link" onclick="showPage('menu')">Menu</span>
+                        <span class="nav-link" onclick="showPage('cart')">
+                            Cart <span id="cartBadge4" class="cart-badge">0</span>
+                        </span>
+                        <span class="nav-link active" onclick="showPage('profile')">Profile</span>
+                        <span class="nav-link" onclick="logout()">Logout</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container">
+                <div class="profile-section">
+                    <div class="profile-header">
+                        <div class="profile-avatar">👤</div>
+                        <h2 id="profileName">User</h2>
+                        <p id="profileEmail">user@apsit.edu.in</p>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3 style="margin-bottom: 20px; color: #333;">Past Orders</h3>
+                    <div id="pastOrders"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Page -->
+    <div id="checkout" class="page">
+        <div class="app-container">
+            <nav class="navbar">
+                <div class="nav-content">
+                    <div class="logo">🍽️ Apsit Canteen</div>
+                    <div class="nav-links">
+                        <span class="nav-link" onclick="showPage('menu')">Menu</span>
+                        <span class="nav-link" onclick="showPage('cart')">
+                            Cart <span id="cartBadge3" class="cart-badge">0</span>
+                        </span>
+                        <span class="nav-link" onclick="showPage('profile')">Profile</span>
+                        <span class="nav-link" onclick="logout()">Logout</span>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container">
+                <div class="checkout-header">
+                    <h1>Complete Your Order</h1>
+                    <div class="checkout-steps">
+                        <div class="step active">
+                            <div class="step-number">1</div>
+                            <span>Payment</span>
+                        </div>
+                        <div class="step-line"></div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <span>Confirm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-content">
+                    <div class="checkout-left">
+                        <div class="checkout-section">
+                            <h3>Order Summary</h3>
+                            <div id="checkoutItems" class="checkout-items"></div>
+                            <div class="checkout-total">
+                                <div class="total-row">
+                                    <span>Subtotal:</span>
+                                    <span>₹<span id="checkoutSubtotal">0</span></span>
+                                </div>
+                                <div class="total-row">
+                                    <span>Service Fee:</span>
+                                    <span>₹5</span>
+                                </div>
+                                <div class="total-row final-total">
+                                    <span>Total:</span>
+                                    <span>₹<span id="checkoutTotal">0</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-right">
+                        <div class="checkout-section">
+                            <h3>Payment Method</h3>
+                            <div class="modern-payment-methods">
+                                <div class="modern-payment-option" onclick="selectPayment('upi')">
+                                    <div class="payment-icon">📱</div>
+                                    <div class="payment-info">
+                                        <h4>UPI Payment</h4>
+                                        <p>Quick & secure payment</p>
+                                    </div>
+                                    <div class="payment-radio"></div>
+                                </div>
+                                <div class="modern-payment-option" onclick="selectPayment('card')">
+                                    <div class="payment-icon">💳</div>
+                                    <div class="payment-info">
+                                        <h4>Credit/Debit Card</h4>
+                                        <p>Visa, Mastercard, RuPay</p>
+                                    </div>
+                                    <div class="payment-radio"></div>
+                                </div>
+                                <div class="modern-payment-option" onclick="selectPayment('cash')">
+                                    <div class="payment-icon">💵</div>
+                                    <div class="payment-info">
+                                        <h4>Cash on Collection</h4>
+                                        <p>Pay when you collect</p>
+                                    </div>
+                                    <div class="payment-radio"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="modernPaymentForm" class="modern-payment-form" style="display: none;">
+                                <div id="modernCardDetails" style="display: none;">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Card Number</label>
+                                            <input type="text" placeholder="1234 5678 9012 3456" class="card-input">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Expiry Date</label>
+                                            <input type="text" placeholder="MM/YY">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>CVV</label>
+                                            <input type="text" placeholder="123">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="modernUpiDetails" style="display: none;">
+                                    <div class="form-group">
+                                        <label>UPI ID</label>
+                                        <input type="text" placeholder="yourname@upi">
+                                    </div>
+                                </div>
+                                <button class="modern-pay-btn" onclick="processPayment()">
+                                    <span class="pay-icon">🔒</span>
+                                    Pay ₹<span id="finalAmount">0</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
