@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { api } from '../services/api';
 
-function Admin({ menuItems, setMenuItems, allOrders, updateOrderStatus }) {
+function Admin({ menuItems, setMenuItems, allOrders, updateOrderStatus, loadMenuItems, loadOrders }) {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({
@@ -17,43 +18,54 @@ function Admin({ menuItems, setMenuItems, allOrders, updateOrderStatus }) {
     });
   };
 
-  const handleAddItem = (e) => {
+  const handleAddItem = async (e) => {
     e.preventDefault();
-    const newItem = {
-      id: menuItems.length + 1,
-      name: formData.name,
-      price: parseInt(formData.price),
-      image: formData.image,
-      category: formData.category
-    };
-    const updatedItems = [...menuItems, newItem];
-    setMenuItems(updatedItems);
-    localStorage.setItem('menuItems', JSON.stringify(updatedItems));
-    setFormData({ name: '', price: '', image: '', category: '' });
-    setShowAddForm(false);
-    alert('Item added successfully!');
+    try {
+      await api.addMenuItem({
+        name: formData.name,
+        price: parseInt(formData.price),
+        image: formData.image,
+        category: formData.category
+      });
+      setFormData({ name: '', price: '', image: '', category: '' });
+      setShowAddForm(false);
+      alert('Item added successfully!');
+      loadMenuItems();
+    } catch (error) {
+      console.error('Error adding item:', error);
+      alert('Failed to add item');
+    }
   };
 
-  const handleUpdateItem = (e) => {
+  const handleUpdateItem = async (e) => {
     e.preventDefault();
-    const updatedItems = menuItems.map(item => 
-      item.id === editingItem.id 
-        ? { ...item, name: formData.name, price: parseInt(formData.price), image: formData.image, category: formData.category }
-        : item
-    );
-    setMenuItems(updatedItems);
-    localStorage.setItem('menuItems', JSON.stringify(updatedItems));
-    setEditingItem(null);
-    setFormData({ name: '', price: '', image: '', category: '' });
-    alert('Item updated successfully!');
+    try {
+      await api.updateMenuItem(editingItem.id, {
+        name: formData.name,
+        price: parseInt(formData.price),
+        image: formData.image,
+        category: formData.category
+      });
+      setEditingItem(null);
+      setFormData({ name: '', price: '', image: '', category: '' });
+      alert('Item updated successfully!');
+      loadMenuItems();
+    } catch (error) {
+      console.error('Error updating item:', error);
+      alert('Failed to update item');
+    }
   };
 
-  const handleDeleteItem = (id) => {
+  const handleDeleteItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this item?')) {
-      const updatedItems = menuItems.filter(item => item.id !== id);
-      setMenuItems(updatedItems);
-      localStorage.setItem('menuItems', JSON.stringify(updatedItems));
-      alert('Item deleted successfully!');
+      try {
+        await api.deleteMenuItem(id);
+        alert('Item deleted successfully!');
+        loadMenuItems();
+      } catch (error) {
+        console.error('Error deleting item:', error);
+        alert('Failed to delete item');
+      }
     }
   };
 

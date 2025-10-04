@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../services/api';
 
 function Auth({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,23 +11,35 @@ function Auth({ onLogin }) {
     password: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      const userData = {
-        email: formData.email,
-        name: isLogin 
-          ? formData.email.split('@')[0].replace(/[._-]/g, ' ').replace(/\s+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()).trim()
-          : formData.name,
-        isFaculty: isFaculty
-      };
+    try {
+      let userData;
+      if (isLogin) {
+        userData = await api.login(formData.email, formData.password);
+        if (!userData || !userData.id) {
+          alert('Invalid credentials');
+          setLoading(false);
+          return;
+        }
+      } else {
+        userData = await api.register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          isFaculty: isFaculty
+        });
+      }
       
       localStorage.setItem('currentUser', JSON.stringify(userData));
       onLogin(userData);
-      setLoading(false);
-    }, 1500);
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert('Authentication failed. Please try again.');
+    }
+    setLoading(false);
   };
 
   const handleChange = (e) => {
